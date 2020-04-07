@@ -46,10 +46,10 @@ def create_model():
     return model
 
 batch_size=2
-# model=create_model()
-model=keras.models.load_model('fcnface1.h5')
+model=create_model()
+# model=keras.models.load_model('fcnface1.h5')
 keras.utils.plot_model(model,show_shapes=True,to_file='fcn.png')
-x_train,y_train,x_test,y_test=load_data(split=0.7)
+x_train,y_train,x_test,y_test=load_data(split=0.8)
 # print(x_train.shape,y_train.shape)
 model.compile(optimizer=keras.optimizers.Adam(lr=3e-6),loss='categorical_crossentropy',metrics=['acc'])
 model.fit_generator(gendata(x_train,y_train,batch_size),

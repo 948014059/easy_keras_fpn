@@ -3,6 +3,8 @@ import os
 import  numpy as np
 from keras.preprocessing import image
 import cv2
+
+# 将单通道的label 转化为 多通道的label
 def binarylab(labels,classes,size):
     y=np.zeros((size,size,classes))
     for i in range(size):
@@ -10,7 +12,7 @@ def binarylab(labels,classes,size):
             y[i,j,int(labels[i][j])]=1
     return y
 
-
+# 加载数据，并切分成训练集和测试集
 def load_data(split=0.9):
     img_dir = 'dataset/img'
     label_dir = 'dataset/label'
@@ -27,27 +29,28 @@ def load_data(split=0.9):
 
     return x_train,y_train,x_test,y_test
 
+# 生成器
 def gendata(x_data,y_data,batch_size):
     while True:
         data=[]
         label=[]
         for index,img_path in enumerate(x_data):
             img=cv2.imread(img_path)
-            img=cv2.resize(img,(416,416))
+            img=cv2.resize(img,(224,224))
             data.append(img)
 
             label_img=Image.open(y_data[index])
-            label_img = label_img.resize([416, 416])
+            label_img = label_img.resize([224, 224])
             label_img = image.img_to_array(label_img)
-            label_ = np.reshape(label_img, [416, 416])
+            label_ = np.reshape(label_img, [224, 224])
             mask = label_ == 255
             label_[mask] = 0
-            y = binarylab(label_, 3, 416)
+            y = binarylab(label_, 3, 224)
             y = np.expand_dims(y, axis=0)
             label.append(y)
             if len(data)==batch_size:
-                data=np.array(data).reshape(-1,416,416,3)
-                label=np.array(label).reshape(-1,416,416,3)
+                data=np.array(data).reshape(-1,224,224,3)
+                label=np.array(label).reshape(-1,224,224,3)
                 yield  data,label
                 data=[]
                 label=[]

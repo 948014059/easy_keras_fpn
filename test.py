@@ -10,6 +10,7 @@ image_paths = [os.path.join(img_dir, path) for path in os.listdir(img_dir)]
 model=tf.keras.models.load_model('fcnface1.h5')
 
 random.shuffle(image_paths)
+# 定义颜色
 corlor=np.array([(0,0,0),(0,255,0),(0,0,255)])
 
 
@@ -20,10 +21,12 @@ for image_path in image_paths:
     img = img.reshape(-1,224,224,3)
     pred=model.predict(img)
     prediction = np.argmax(pred, axis=-1)
-    with open('pred.txt','w',encoding='utf8') as f :
-        f.write(str(prediction.tolist()))
+    # with open('pred.txt','w',encoding='utf8') as f :
+    #     f.write(str(prediction.tolist()))
 
+    # 将识别后的标签对应到颜色
     color_image = np.array(corlor)[prediction.ravel()].reshape(224, 224, 3).astype('uint8')
+
     kernel=cv2.getStructuringElement(cv2.MORPH_RECT,(5,5))
     image=cv2.erode(color_image,kernel)
 
